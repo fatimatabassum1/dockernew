@@ -1,0 +1,33 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Ckeckout') {
+      steps {
+        // Clone main branch
+        //git branch: 'main', url: 'https://github.com/fatimatabassum1/dockernew/tree/main'
+      }
+    }
+  stages {
+    stage('Build') {
+      steps {
+        // Build your Docker image here
+        sh 'docker build -t fatimaimage .'
+      }
+    }
+    
+    stage('Push to DockerHub') {
+      steps {
+        withCredentials([
+          usernamePassword(credentialsId: 'dockercred', passwordVariable: 'DOCKERHUB_PASSWORD', usernameVariable: 'DOCKERHUB_USERNAME')
+        ]) {
+          // Login to DockerHub
+          sh 'docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD'
+          
+          // Push the image to DockerHub
+          sh 'docker push fatimatabassum/fatimaimage'
+        }
+      }
+    }
+  }
+}
